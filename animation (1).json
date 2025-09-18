@@ -1,0 +1,12 @@
+{
+  "spriteSheet": "https://i.ibb.co/hJTqKw7K/spritesheet-1.png",
+  "animations": {
+    "animation": {
+      "frames": 6,
+      "width": 200,
+      "height": 200,
+      "speed": 0.1,
+      "loop": true
+    }
+  }
+}
