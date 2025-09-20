@@ -1,23 +1,23 @@
 {
-  "device": "pc",
-  "width": 1280,
-  "height": 720,
+  "device": "phone",
+  "width": 667,
+  "height": 375,
   "images": [
     {
       "id": "image_1758373093297",
       "name": "fondo.1",
       "url": "https://i.pinimg.com/736x/a4/b2/d7/a4b2d7d9568da740e7fbb9a0dac9b1d7.jpg",
-      "x": -98,
-      "y": -32,
-      "width": 1502,
-      "height": 833
+      "x": -52,
+      "y": -15,
+      "width": 720,
+      "height": 438
     },
     {
       "id": "image_1758373777561",
       "name": "boton.start",
       "url": "https://cdn-icons-png.flaticon.com/512/5261/5261298.png",
-      "x": 460,
-      "y": 441,
+      "x": 180,
+      "y": 183,
       "width": 305,
       "height": 135
     }
