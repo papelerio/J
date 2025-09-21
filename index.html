@@ -160,7 +160,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Media queries para pantallas grandes (PCs) */
         @media (min-width: 768px) {
             .titulo {
                 font-size: clamp(28px, 4vw, 36px);
@@ -216,16 +215,12 @@
             const estadoJuego = document.getElementById('estado-juego');
             const cargando = document.getElementById('cargando');
             
-            // Variables para el juego
             let audioContext = null;
             let controlesConfig = null;
             let botones = {};
-            
-            // Dimensiones de referencia (basadas en el JSON original)
             const referenciaAncho = 667;
             const referenciaAlto = 375;
             
-            // Solicitar pantalla completa
             btnPantallaCompleta.addEventListener('click', function() {
                 if (document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen();
@@ -240,7 +235,6 @@
                 activarAudio();
             });
             
-            // Evento para cuando se activa el modo pantalla completa
             document.addEventListener('fullscreenchange', manejarCambioPantallaCompleta);
             document.addEventListener('webkitfullscreenchange', manejarCambioPantallaCompleta);
             document.addEventListener('mozfullscreenchange', manejarCambioPantallaCompleta);
@@ -266,14 +260,12 @@
             function ajustarTamanioCanvas() {
                 lienzoJuego.width = window.innerWidth;
                 lienzoJuego.height = window.innerHeight;
-                actualizarPosicionesBotones(); // Actualizar posiciones de los botones
-                dibujarJuego(); // Redibujar el juego
+                actualizarPosicionesBotones();
+                dibujarJuego();
             }
             
-            // Ajustar el tamaño del canvas y botones si la ventana cambia de tamaño
             window.addEventListener('resize', ajustarTamanioCanvas);
             
-            // Función para activar el sistema de audio
             function activarAudio() {
                 if (audioContext) return;
                 
@@ -285,7 +277,6 @@
                 }
             }
             
-            // Función para crear un sonido
             function playSonido(frecuencia, duracion) {
                 if (!audioContext) return;
                 
@@ -301,28 +292,34 @@
                 oscilador.stop(audioContext.currentTime + duracion);
             }
             
-            // Cargar configuración de controles desde el JSON
             async function cargarConfiguracionControles() {
                 try {
                     cargando.style.display = 'block';
+                    console.log('Intentando cargar el JSON desde:', 'https://raw.githubusercontent.com/papelerio/J/refs/heads/main/Controles.json');
                     
                     const respuesta = await fetch('https://raw.githubusercontent.com/papelerio/J/refs/heads/main/Controles.json');
+                    console.log('Estado de la respuesta:', respuesta.status, respuesta.statusText);
+                    
                     if (!respuesta.ok) {
-                        throw new Error('Error al cargar la configuración de controles');
+                        throw new Error(`Error al cargar la configuración: ${respuesta.status} ${respuesta.statusText}`);
                     }
                     
                     const datos = await respuesta.json();
+                    console.log('Datos del JSON:', datos);
+                    
                     controlesConfig = datos.controles;
+                    if (!controlesConfig) {
+                        throw new Error('El JSON no contiene la propiedad "controles"');
+                    }
                     
                     crearBotonesControles();
                     cargando.style.display = 'none';
                 } catch (error) {
-                    console.error('Error:', error);
-                    cargando.innerHTML = '<p>Error al cargar la configuración de controles</p>';
+                    console.error('Error al cargar el JSON:', error);
+                    cargando.innerHTML = `<p>Error al cargar la configuración: ${error.message}</p>`;
                 }
             }
             
-            // Crear botones de control basados en la configuración
             function crearBotonesControles() {
                 if (!controlesConfig) return;
                 
@@ -337,7 +334,6 @@
                     boton.id = `btn-${letra}`;
                     boton.textContent = letra;
                     
-                    // Escalar posición y tamaño
                     const escalaX = window.innerWidth / referenciaAncho;
                     const escalaY = window.innerHeight / referenciaAlto;
                     boton.style.width = `${config.width * escalaX}px`;
@@ -345,7 +341,6 @@
                     boton.style.left = `${config.x * escalaX}px`;
                     boton.style.top = `${config.y * escalaY}px`;
                     
-                    // Añadir eventos
                     boton.addEventListener('click', () => {
                         const frecuencia = 200 + (letra.charCodeAt(0) - 65) * 50;
                         playSonido(frecuencia, 0.2);
@@ -367,7 +362,6 @@
                 });
             }
             
-            // Actualizar posiciones de los botones al cambiar el tamaño de la ventana
             function actualizarPosicionesBotones() {
                 if (!controlesConfig || !botones) return;
                 
@@ -386,7 +380,6 @@
                 });
             }
             
-            // Dibujar el juego en el canvas
             function dibujarJuego() {
                 const contexto = lienzoJuego.getContext('2d');
                 
@@ -419,7 +412,6 @@
                 contexto.fillText('Presiona los botones para interactuar', lienzoJuego.width/2, 80);
             }
             
-            // Función auxiliar para clamp
             function clamp(min, vw, max) {
                 return Math.min(Math.max(window.innerWidth * vw / 100, min), max);
             }
