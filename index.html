@@ -2,420 +2,1367 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Juego Móvil con Controles Predefinidos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Móvil HTML5</title>
     <style>
-        * {
+        :root {
+            --bg-primary: #e8e8e8;
+            --bg-secondary: #f5f5f5;
+            --bg-surface: #f8f9fa;
+            --bg-card: #f0f0f0;
+            --text-primary: #000000;
+            --text-secondary: #333333;
+            --border: #cccccc;
+            --border-light: #dddddd;
+            --accent: #007aff;
+        }
+
+        .dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #121212;
+            --bg-surface: #2d2d2d;
+            --bg-card: #404040;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --border: #555555;
+            --border-light: #444444;
+            --accent: #007aff;
+        }
+
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a2e;
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             overflow: hidden;
+        }
+
+        .app-container {
             width: 100vw;
             height: 100vh;
-            color: #fff;
-            touch-action: none;
+            position: relative;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            box-sizing: border-box;
         }
-        
-        #pantalla-completa-container {
+
+        /* Pantalla de resultados */
+        .pantalla-resultados {
+            position: absolute;
+            left: 1.6%;
+            top: 27.4%;
+            width: 96.3%;
+            height: 8.5%;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 10px;
+            font-size: 24px;
+            color: var(--text-primary);
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: text;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .pantalla-resultados.resultado-presente {
+            background-color: #fffacd; /* Amarillo suave */
+            color: #000000;
+        }
+
+        .pantalla-contenido {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .cursor {
+            width: 2px;
+            height: 28px;
+            background-color: var(--accent);
+            animation: blink 1s infinite;
+            margin: 0 1px;
+            flex-shrink: 0;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Teclado */
+        .teclado {
+            position: absolute;
+            left: 1.7%;
+            top: 37.1%;
+            width: 96.3%;
+            height: 61.5%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .tecla {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .tecla:active {
+            background-color: #e0e0e0;
+        }
+
+        .tecla.operacion {
+            background-color: #ff9500;
+            color: white;
+        }
+
+        .tecla.igual {
+            background-color: var(--accent);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .tecla.cero {
+            grid-column: span 2;
+        }
+
+        /* Datos guardados - Carousel vertical comprimido */
+        .datos-guardados {
+            position: absolute;
+            left: 2.1%;
+            top: 7%;
+            width: 95%;
+            height: 19.6%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .carousel-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 5px 0;
+        }
+
+        .carousel-item {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px 10px;
+            min-height: 24px; /* Altura mínima comprimida para más visibilidad */
+            border-bottom: 1px solid var(--border-light);
+            font-size: 14px; /* Fuente más pequeña para caber más */
+            color: var(--text-primary);
+        }
+
+        .carousel-item:last-child {
+            border-bottom: none;
+        }
+
+        .slot {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .slot-label {
+            font-weight: bold;
+            min-width: 20px;
+            color: var(--text-secondary);
+        }
+
+        .numero-guardado {
+            font-size: 14px;
+            min-width: 80px;
+            text-align: right;
+            flex: 0 0 auto;
+            color: var(--text-primary);
+        }
+
+        .btn-save, .btn-load {
+            padding: 2px 6px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px; /* Botones más pequeños */
+            white-space: nowrap;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-save:active, .btn-load:active {
+            background-color: #0056b3;
+        }
+
+        /* Navbar para carousel (derecha) */
+        .navbar-carousel {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            z-index: 10;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--border);
+            border-radius: 50%;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .nav-dot.active {
+            background-color: var(--accent);
+        }
+
+        /* Plus button */
+        .plus {
+            position: absolute;
+            left: 2.5%;
+            top: 1%;
+            width: 13.3%;
+            height: 5.2%;
+            background-color: #fffacd; /* Amarillo suave */
+            border: 2px solid #ffd700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            z-index: 100;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .plus:active {
+            background-color: #ffd700;
+        }
+
+        .plus.hidden {
+            display: none;
+        }
+
+        /* Extras */
+        .extras {
+            position: absolute;
+            left: 17.7%;
+            top: 1.1%;
+            width: 78.1%;
+            height: 5%;
+            display: flex;
+            gap: 10px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn-extra {
+            padding: 5px 15px;
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-extra:active {
+            background-color: #cc2e25;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            right: 2%;
+            top: 1%;
+        }
+
+        .btn-theme {
+            padding: 5px 10px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-theme:active {
+            background-color: #0056b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--bg-surface);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            color: var(--text-primary);
+        }
+
+        .btn-modal {
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-modal.cancel {
+            background-color: #ff3b30;
+        }
+
+        /* Pantalla Plus */
+        .plus-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .plus-screen.active {
+            display: flex;
+        }
+
+        .plus-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            height: 8%;
+        }
+
+        .plus-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .vinetas-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .vineta {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             text-align: center;
-            padding: 2vw;
-            position: relative;
-        }
-        
-        .titulo {
-            font-size: clamp(24px, 5vw, 32px);
-            margin-bottom: 1.5vh;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            color: #e94560;
-        }
-        
-        .subtitulo {
-            font-size: clamp(16px, 3vw, 20px);
-            margin-bottom: 3vh;
-            max-width: 80%;
-            color: #b8b8d1;
-        }
-        
-        #btn-pantalla-completa {
-            padding: clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px);
-            font-size: clamp(16px, 3vw, 20px);
-            background-color: #e94560;
-            color: white;
-            border: none;
-            border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            margin-bottom: 2vh;
-            font-weight: bold;
-        }
-        
-        #btn-pantalla-completa:hover {
-            background-color: #ff577f;
-            transform: scale(1.05);
-        }
-        
-        #btn-pantalla-completa:active {
-            transform: scale(0.98);
-        }
-        
-        .info-sonido {
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: clamp(10px, 2vw, 15px);
-            border-radius: 10px;
-            max-width: 90%;
-            margin-top: 2vh;
-            font-size: clamp(12px, 2.5vw, 14px);
-            border-left: 4px solid #0f3460;
-        }
-        
-        #juego-container {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        #lienzo-juego {
-            background: linear-gradient(to bottom, #2c3e50, #4a69bd);
-            width: 100%;
-            height: 100%;
-            display: block;
-            touch-action: none;
-        }
-        
-        .control-btn {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #e94560, #c53d54);
-            border: none;
-            color: white;
-            font-size: clamp(16px, 3vw, 20px);
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-            touch-action: none;
-            z-index: 10;
-            transition: transform 0.1s ease;
-        }
-        
-        .control-btn:active {
-            transform: scale(0.95);
-            background: linear-gradient(145deg, #ff577f, #e94560);
-        }
-        
-        #estado-juego {
-            position: absolute;
-            top: 2vh;
-            left: 2vw;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 15px);
-            border-radius: 20px;
-            font-size: clamp(12px, 2.5vw, 14px);
-            z-index: 100;
-        }
-        
-        #cargando {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: clamp(15px, 3vw, 20px);
-            border-radius: 10px;
-            text-align: center;
-            z-index: 1000;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid #e94560;
-            width: clamp(30px, 5vw, 40px);
-            height: clamp(30px, 5vw, 40px);
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1.5vh;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            color: var(--text-primary);
         }
 
-        @media (min-width: 768px) {
-            .titulo {
-                font-size: clamp(28px, 4vw, 36px);
-            }
-            .subtitulo {
-                font-size: clamp(18px, 2.5vw, 22px);
-                max-width: 50%;
-            }
-            #btn-pantalla-completa {
-                padding: clamp(14px, 2vw, 18px) clamp(28px, 4vw, 36px);
-                font-size: clamp(18px, 3vw, 22px);
-            }
-            .info-sonido {
-                max-width: 40%;
-            }
-            .control-btn {
-                font-size: clamp(18px, 2.5vw, 22px);
-            }
-            #estado-juego {
-                font-size: clamp(14px, 2vw, 16px);
-            }
+        .vineta:active {
+            background-color: #e0e0e0;
+        }
+
+        .vineta-vacia {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .vineta-placeholder {
+            font-size: 14px;
+            margin-top: 10px;
+            color: var(--text-secondary);
+        }
+
+        .vineta-img {
+            max-width: 100%;
+            max-height: 80px;
+            margin-bottom: 8px;
+        }
+
+        .vineta-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 5px;
+            color: var(--text-primary);
+        }
+
+        /* Pantalla Pitágoras */
+        .pitagoras-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            z-index: 60;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .pitagoras-screen.active {
+            display: flex;
+        }
+
+        .pitagoras-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pitagoras-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+            color: var(--text-primary);
+        }
+
+        .btn-back {
+            padding: 8px 15px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-back:active {
+            background-color: #0056b3;
+        }
+
+        .pitagoras-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .pitagoras-img {
+            max-width: 80%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .input-group {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-label {
+            font-size: 16px;
+            font-weight: bold;
+            min-width: 30px;
+            color: var(--text-secondary);
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-calcular {
+            padding: 15px 30px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-calcular:active {
+            background-color: #0056b3;
+        }
+
+        .resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 200px;
+            color: #000000;
+        }
+
+        /* Pantalla Ángulos Triángulo */
+        .angulos-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            z-index: 60;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .angulos-screen.active {
+            display: flex;
+        }
+
+        .angulos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .angulos-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+            color: var(--text-primary);
+        }
+
+        .angulos-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            overflow-y: auto;
+            padding-bottom: 20px;
+            scroll-snap-type: y mandatory;
+        }
+
+        .angulos-section {
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .angulos-img {
+            max-width: 80%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .resultados {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 80%;
         }
     </style>
 </head>
 <body>
-    <div id="pantalla-completa-container">
-        <h1 class="titulo">Juego Móvil</h1>
-        <p class="subtitulo">Activa el modo pantalla completa para comenzar a jugar</p>
-        <button id="btn-pantalla-completa">Pantalla Completa</button>
-        
-        <div class="info-sonido">
-            <strong>Controles predefinidos:</strong> El juego utiliza una configuración de controles preestablecida.
+    <div class="app-container">
+        <!-- Pantalla de resultados -->
+        <div id="pantalla" class="pantalla-resultados">
+            <div class="pantalla-contenido">
+                <span id="texto-izq"></span>
+                <div class="cursor" id="cursor"></div>
+                <span id="texto-der"></span>
+            </div>
         </div>
-    </div>
-    
-    <div id="juego-container">
-        <canvas id="lienzo-juego"></canvas>
-        
-        <div id="estado-juego">Controles cargados: 0/9</div>
-        
-        <div id="cargando">
-            <div class="spinner"></div>
-            <p>Cargando controles...</p>
+
+        <!-- Datos guardados (Carousel) -->
+        <div class="datos-guardados">
+            <div class="carousel-container" id="carousel">
+                <!-- Slots A a K se generarán dinámicamente -->
+            </div>
+            <div class="navbar-carousel" id="navbar">
+                <!-- Dots se generarán dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Plus button - Ahora funciona como toggle -->
+        <div class="plus" id="plus">+</div>
+
+        <!-- Extras -->
+        <div class="extras">
+            <button class="btn-extra" id="limpiar-datos">Limpiar datos guardados</button>
+            <button class="btn-extra" id="cerrar-app">Cerrar app</button>
+        </div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-toggle">
+            <button id="dark-toggle" class="btn-theme">🌙</button>
+        </div>
+
+        <!-- Teclado -->
+        <div class="teclado">
+            <div class="tecla" data-value="C">AC</div>
+            <div class="tecla" data-value="DEL">⌫</div>
+            <div class="tecla operacion" data-value="%">%</div>
+            <div class="tecla operacion" data-value="√">√</div>
+            <div class="tecla operacion" data-value="/">÷</div>
+            <div class="tecla" data-value="7">7</div>
+            <div class="tecla" data-value="8">8</div>
+            <div class="tecla" data-value="9">9</div>
+            <div class="tecla operacion" data-value="*">×</div>
+            <div class="tecla" data-value="4">4</div>
+            <div class="tecla" data-value="5">5</div>
+            <div class="tecla" data-value="6">6</div>
+            <div class="tecla operacion" data-value="-">-</div>
+            <div class="tecla" data-value="1">1</div>
+            <div class="tecla" data-value="2">2</div>
+            <div class="tecla" data-value="3">3</div>
+            <div class="tecla operacion" data-value="+">+</div>
+            <div class="tecla cero" data-value="0">0</div>
+            <div class="tecla" data-value=".">.</div>
+            <div class="tecla igual" data-value="=">=</div>
+        </div>
+
+        <!-- Pantalla Plus -->
+        <div id="plus-screen" class="plus-screen">
+            <div class="plus-header">
+                <div class="plus-title">Operaciones Personalizadas</div>
+            </div>
+            <div class="vinetas-container" id="vinetas-container">
+                <!-- Viñetas se generarán dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Pantalla Pitágoras -->
+        <div id="pitagoras-screen" class="pitagoras-screen">
+            <div class="pitagoras-header">
+                <button class="btn-back" id="volver-plus">← Volver</button>
+                <div class="pitagoras-title">Teorema de Pitágoras</div>
+                <div style="width: 100px;"></div> <!-- Espacio para balancear -->
+            </div>
+            <div class="pitagoras-content">
+                <img src="https://i.ibb.co/jk9G89QJ/image.png" alt="Triángulo rectángulo" class="pitagoras-img">
+                <div class="input-group">
+                    <div class="input-field">
+                        <span class="input-label">a =</span>
+                        <input type="number" id="input-a" class="input-box" placeholder="Ingresa cateto a" inputmode="numeric">
+                    </div>
+                    <div class="input-field">
+                        <span class="input-label">b =</span>
+                        <input type="number" id="input-b" class="input-box" placeholder="Ingresa cateto b" inputmode="numeric">
+                    </div>
+                </div>
+                <button class="btn-calcular" id="calcular-hipotenusa">Calcular</button>
+                <div class="resultado" id="resultado-c" style="display: none;">
+                    Resultado c = <span id="valor-c"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla Ángulos Triángulo -->
+        <div id="angulos-screen" class="angulos-screen">
+            <div class="angulos-header">
+                <button class="btn-back" id="volver-angulos">← Volver</button>
+                <div class="angulos-title">Ángulos del Triángulo</div>
+                <div style="width: 100px;"></div> <!-- Espacio para balancear -->
+            </div>
+            <div class="angulos-content">
+                <div class="angulos-section">
+                    <img src="https://i.ibb.co/gZRf2j3z/image.png" alt="Triángulo" class="angulos-img">
+                </div>
+                <div class="angulos-section">
+                    <div class="input-group">
+                        <div class="input-field">
+                            <span class="input-label">a =</span>
+                            <input type="number" id="input-a-ang" class="input-box" placeholder="Ingresa lado a" inputmode="numeric">
+                        </div>
+                        <div class="input-field">
+                            <span class="input-label">b =</span>
+                            <input type="number" id="input-b-ang" class="input-box" placeholder="Ingresa lado b" inputmode="numeric">
+                        </div>
+                        <div class="input-field">
+                            <span class="input-label">c =</span>
+                            <input type="number" id="input-c-ang" class="input-box" placeholder="Ingresa lado c" inputmode="numeric">
+                        </div>
+                    </div>
+                    <button class="btn-calcular" id="calcular-angulos">Calcular</button>
+                </div>
+                <div class="angulos-section" id="resultados-angulos" style="display: none;">
+                    <div class="resultados">
+                        <div class="resultado">Ángulo A = <span id="valor-A"></span>°</div>
+                        <div class="resultado">Ángulo B = <span id="valor-B"></span>°</div>
+                        <div class="resultado">Ángulo C = <span id="valor-C"></span>°</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para confirmar limpiar datos -->
+        <div id="modal-limpiar" class="modal">
+            <div class="modal-content">
+                <p>¿Desea borrar los datos guardados? Seguro, ¿sí o no?</p>
+                <button class="btn-modal" id="confirmar-si">Sí</button>
+                <button class="btn-modal cancel" id="confirmar-no">No</button>
+            </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnPantallaCompleta = document.getElementById('btn-pantalla-completa');
-            const pantallaCompletaContainer = document.getElementById('pantalla-completa-container');
-            const juegoContainer = document.getElementById('juego-container');
-            const lienzoJuego = document.getElementById('lienzo-juego');
-            const estadoJuego = document.getElementById('estado-juego');
-            const cargando = document.getElementById('cargando');
-            
-            let audioContext = null;
-            let controlesConfig = null;
-            let botones = {};
-            const referenciaAncho = 667;
-            const referenciaAlto = 375;
-            
-            btnPantallaCompleta.addEventListener('click', function() {
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.documentElement.mozRequestFullScreen) {
-                    document.documentElement.mozRequestFullScreen();
-                } else if (document.documentElement.webkitRequestFullscreen) {
-                    document.documentElement.webkitRequestFullscreen();
-                } else if (document.documentElement.msRequestFullscreen) {
-                    document.documentElement.msRequestFullscreen();
-                }
-                
-                activarAudio();
-            });
-            
-            document.addEventListener('fullscreenchange', manejarCambioPantallaCompleta);
-            document.addEventListener('webkitfullscreenchange', manejarCambioPantallaCompleta);
-            document.addEventListener('mozfullscreenchange', manejarCambioPantallaCompleta);
-            document.addEventListener('MSFullscreenChange', manejarCambioPantallaCompleta);
-            
-            function manejarCambioPantallaCompleta() {
-                const esPantallaCompleta = document.fullscreenElement || 
-                                          document.webkitFullscreenElement || 
-                                          document.mozFullScreenElement ||
-                                          document.msFullscreenElement;
-                
-                if (esPantallaCompleta) {
-                    pantallaCompletaContainer.style.display = 'none';
-                    juegoContainer.style.display = 'block';
-                    ajustarTamanioCanvas();
-                    cargarConfiguracionControles();
-                } else {
-                    pantallaCompletaContainer.style.display = 'flex';
-                    juegoContainer.style.display = 'none';
-                }
+        // Variables globales
+        let pantalla = document.getElementById('pantalla');
+        let textoIzq = document.getElementById('texto-izq');
+        let textoDer = document.getElementById('texto-der');
+        let cursorEl = document.getElementById('cursor');
+        let expresionActual = '';
+        let resultadoPresente = false;
+        let cursorPos = 0;
+        let datosGuardados = {}; // Objeto para A-K: {A: '0', B: '0', ...}
+
+        // Inicializar slots A-K
+        const letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
+        const carousel = document.getElementById('carousel');
+        const navbar = document.getElementById('navbar');
+        let activeIndex = 0;
+        let itemHeight = 0; // Se calculará dinámicamente
+
+        // Pantallas
+        const plusScreen = document.getElementById('plus-screen');
+        const pitagorasScreen = document.getElementById('pitagoras-screen');
+        const angulosScreen = document.getElementById('angulos-screen');
+        const plusBtn = document.getElementById('plus');
+        const vinetasContainer = document.getElementById('vinetas-container');
+        const volverPlusBtn = document.getElementById('volver-plus');
+        const volverAngulosBtn = document.getElementById('volver-angulos');
+        const calcularBtn = document.getElementById('calcular-hipotenusa');
+        const calcularAngulosBtn = document.getElementById('calcular-angulos');
+        const inputA = document.getElementById('input-a');
+        const inputB = document.getElementById('input-b');
+        const inputA_ang = document.getElementById('input-a-ang');
+        const inputB_ang = document.getElementById('input-b-ang');
+        const inputC_ang = document.getElementById('input-c-ang');
+        const resultadoC = document.getElementById('resultado-c');
+        const valorC = document.getElementById('valor-c');
+        const resultadosAngulos = document.getElementById('resultados-angulos');
+
+        // Dark Mode
+        const appContainer = document.querySelector('.app-container');
+        const darkToggle = document.getElementById('dark-toggle');
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+
+        if (darkMode) {
+            appContainer.classList.add('dark-mode');
+            darkToggle.textContent = '☀️';
+        } else {
+            darkToggle.textContent = '🌙';
+        }
+
+        darkToggle.addEventListener('click', () => {
+            darkMode = !darkMode;
+            if (darkMode) {
+                appContainer.classList.add('dark-mode');
+                darkToggle.textContent = '☀️';
+            } else {
+                appContainer.classList.remove('dark-mode');
+                darkToggle.textContent = '🌙';
             }
-            
-            function ajustarTamanioCanvas() {
-                lienzoJuego.width = window.innerWidth;
-                lienzoJuego.height = window.innerHeight;
-                actualizarPosicionesBotones();
-                dibujarJuego();
-            }
-            
-            window.addEventListener('resize', ajustarTamanioCanvas);
-            
-            function activarAudio() {
-                if (audioContext) return;
-                
-                try {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    console.log("Sistema de audio activado correctamente");
-                } catch (e) {
-                    console.error("Error al activar el audio: ", e);
-                }
-            }
-            
-            function playSonido(frecuencia, duracion) {
-                if (!audioContext) return;
-                
-                const oscilador = audioContext.createOscillator();
-                const ganancia = audioContext.createGain();
-                
-                oscilador.type = 'sine';
-                oscilador.frequency.setValueAtTime(frecuencia, audioContext.currentTime);
-                ganancia.gain.setValueAtTime(0.3, audioContext.currentTime);
-                oscilador.connect(ganancia);
-                ganancia.connect(audioContext.destination);
-                oscilador.start();
-                oscilador.stop(audioContext.currentTime + duracion);
-            }
-            
-            async function cargarConfiguracionControles() {
-                try {
-                    cargando.style.display = 'block';
-                    console.log('Intentando cargar el JSON desde:', 'https://raw.githubusercontent.com/papelerio/J/refs/heads/main/Controles.json');
-                    
-                    const respuesta = await fetch('https://raw.githubusercontent.com/papelerio/J/refs/heads/main/Controles.json');
-                    console.log('Estado de la respuesta:', respuesta.status, respuesta.statusText);
-                    
-                    if (!respuesta.ok) {
-                        throw new Error(`Error al cargar la configuración: ${respuesta.status} ${respuesta.statusText}`);
-                    }
-                    
-                    const datos = await respuesta.json();
-                    console.log('Datos del JSON:', datos);
-                    
-                    controlesConfig = datos.controles;
-                    if (!controlesConfig) {
-                        throw new Error('El JSON no contiene la propiedad "controles"');
-                    }
-                    
-                    crearBotonesControles();
-                    cargando.style.display = 'none';
-                } catch (error) {
-                    console.error('Error al cargar el JSON:', error);
-                    cargando.innerHTML = `<p>Error al cargar la configuración: ${error.message}</p>`;
-                }
-            }
-            
-            function crearBotonesControles() {
-                if (!controlesConfig) return;
-                
-                let controlesCargados = 0;
-                const letras = Object.keys(controlesConfig);
-                
+            localStorage.setItem('darkMode', darkMode.toString());
+        });
+
+        function cargarDesdeLocalStorage() {
+            const guardados = localStorage.getItem('calculadora_datos');
+            if (guardados) {
+                datosGuardados = JSON.parse(guardados);
+            } else {
                 letras.forEach(letra => {
-                    const config = controlesConfig[letra];
-                    
-                    const boton = document.createElement('button');
-                    boton.className = 'control-btn';
-                    boton.id = `btn-${letra}`;
-                    boton.textContent = letra;
-                    
-                    const escalaX = window.innerWidth / referenciaAncho;
-                    const escalaY = window.innerHeight / referenciaAlto;
-                    boton.style.width = `${config.width * escalaX}px`;
-                    boton.style.height = `${config.height * escalaY}px`;
-                    boton.style.left = `${config.x * escalaX}px`;
-                    boton.style.top = `${config.y * escalaY}px`;
-                    
-                    boton.addEventListener('click', () => {
-                        const frecuencia = 200 + (letra.charCodeAt(0) - 65) * 50;
-                        playSonido(frecuencia, 0.2);
-                        console.log(`Botón ${letra} presionado`);
-                    });
-                    
-                    boton.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        const frecuencia = 200 + (letra.charCodeAt(0) - 65) * 50;
-                        playSonido(frecuencia, 0.2);
-                        console.log(`Botón ${letra} presionado (touch)`);
-                    }, { passive: false });
-                    
-                    juegoContainer.appendChild(boton);
-                    botones[letra] = boton;
-                    
-                    controlesCargados++;
-                    estadoJuego.textContent = `Controles cargados: ${controlesCargados}/${letras.length}`;
+                    datosGuardados[letra] = '0';
                 });
             }
+        }
+
+        function guardarEnLocalStorage() {
+            localStorage.setItem('calculadora_datos', JSON.stringify(datosGuardados));
+        }
+
+        function inicializarCarousel() {
+            cargarDesdeLocalStorage();
+            letras.forEach((letra, index) => {
+                if (!(letra in datosGuardados)) {
+                    datosGuardados[letra] = '0';
+                }
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.innerHTML = `
+                    <div class="slot">
+                        <span class="slot-label">${letra})</span>
+                        <button class="btn-save" onclick="guardar('${letra}')">Save</button>
+                        <button class="btn-load" onclick="cargar('${letra}')">Load</button>
+                        <span class="numero-guardado" id="num-${letra}">${datosGuardados[letra]}</span>
+                    </div>
+                `;
+                carousel.appendChild(item);
+
+                // Navbar dots
+                const dot = document.createElement('div');
+                dot.className = 'nav-dot';
+                dot.onclick = () => scrollToIndex(index);
+                navbar.appendChild(dot);
+            });
+
+            // Calcular altura aproximada de cada item después de renderizar
+            setTimeout(() => {
+                const firstItem = carousel.querySelector('.carousel-item');
+                if (firstItem) {
+                    itemHeight = firstItem.offsetHeight + 6; // + padding/margin approx
+                }
+                updateNavbar();
+            }, 100);
+        }
+
+        function inicializarPlusScreen() {
+            // Viñeta 1 - Teorema de Pitágoras
+            const vineta1 = document.createElement('div');
+            vineta1.className = 'vineta';
+            vineta1.innerHTML = `
+                <img src="https://i.ibb.co/jk9G89QJ/image.png" alt="Triángulo rectángulo" class="vineta-img">
+                <div class="vineta-title">Teorema de Pitágoras</div>
+            `;
+            vineta1.addEventListener('click', () => {
+                mostrarPitagorasScreen();
+            });
+            vinetasContainer.appendChild(vineta1);
+
+            // Viñeta 2 - Ángulos del Triángulo
+            const vineta2 = document.createElement('div');
+            vineta2.className = 'vineta';
+            vineta2.innerHTML = `
+                <img src="https://i.ibb.co/gZRf2j3z/image.png" alt="Triángulo" class="vineta-img">
+                <div class="vineta-title">Ángulos del Triángulo</div>
+            `;
+            vineta2.addEventListener('click', () => {
+                mostrarAngulosScreen();
+            });
+            vinetasContainer.appendChild(vineta2);
+
+            // Crear viñetas vacías restantes (3 a 6)
+            for (let i = 2; i < 6; i++) {
+                const vineta = document.createElement('div');
+                vineta.className = 'vineta vineta-vacia';
+                vineta.innerHTML = `
+                    <div>Viñeta ${i + 1}</div>
+                    <div class="vineta-placeholder">(Vacía - Próximamente)</div>
+                `;
+                vinetasContainer.appendChild(vineta);
+            }
+        }
+
+        function scrollToIndex(index) {
+            const scrollTop = index * itemHeight;
+            carousel.scrollTop = scrollTop;
+            activeIndex = index;
+            updateNavbar();
+        }
+
+        function updateNavbar() {
+            const dots = navbar.querySelectorAll('.nav-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === activeIndex);
+            });
+        }
+
+        // Funciones para navegación entre pantallas
+        function togglePlusScreen() {
+            const isActive = plusScreen.classList.toggle('active');
+            plusBtn.textContent = isActive ? '←' : '+';
+            plusBtn.classList.toggle('hidden', false); // Asegurar visible al togglear
+        }
+
+        function mostrarPitagorasScreen() {
+            plusScreen.classList.remove('active');
+            pitagorasScreen.classList.add('active');
+            plusBtn.textContent = '+';
+            plusBtn.classList.add('hidden'); // Ocultar botón plus al entrar a viñeta
+            // Limpiar campos al mostrar
+            inputA.value = '';
+            inputB.value = '';
+            resultadoC.style.display = 'none';
+        }
+
+        function volverAPlusScreen() {
+            pitagorasScreen.classList.remove('active');
+            plusScreen.classList.add('active');
+            plusBtn.classList.remove('hidden'); // Mostrar botón plus al salir de viñeta
+            plusBtn.textContent = '←';
+        }
+
+        function mostrarAngulosScreen() {
+            plusScreen.classList.remove('active');
+            angulosScreen.classList.add('active');
+            plusBtn.textContent = '+';
+            plusBtn.classList.add('hidden'); // Ocultar botón plus al entrar a viñeta
+            // Limpiar campos al mostrar
+            inputA_ang.value = '';
+            inputB_ang.value = '';
+            inputC_ang.value = '';
+            resultadosAngulos.style.display = 'none';
+        }
+
+        function volverAAngulosScreen() {
+            angulosScreen.classList.remove('active');
+            plusScreen.classList.add('active');
+            plusBtn.classList.remove('hidden'); // Mostrar botón plus al salir de viñeta
+            plusBtn.textContent = '←';
+        }
+
+        // Función para calcular hipotenusa
+        function calcularHipotenusa() {
+            const a = parseFloat(inputA.value);
+            const b = parseFloat(inputB.value);
             
-            function actualizarPosicionesBotones() {
-                if (!controlesConfig || !botones) return;
-                
-                const escalaX = window.innerWidth / referenciaAncho;
-                const escalaY = window.innerHeight / referenciaAlto;
-                
-                Object.keys(controlesConfig).forEach(letra => {
-                    const config = controlesConfig[letra];
-                    const boton = botones[letra];
-                    if (boton) {
-                        boton.style.width = `${config.width * escalaX}px`;
-                        boton.style.height = `${config.height * escalaY}px`;
-                        boton.style.left = `${config.x * escalaX}px`;
-                        boton.style.top = `${config.y * escalaY}px`;
-                    }
-                });
+            if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+                alert('Por favor, ingresa valores válidos para ambos catetos (números mayores que 0)');
+                return;
             }
             
-            function dibujarJuego() {
-                const contexto = lienzoJuego.getContext('2d');
-                
-                contexto.fillStyle = '#2c3e50';
-                contexto.fillRect(0, 0, lienzoJuego.width, lienzoJuego.height);
-                
-                contexto.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                contexto.lineWidth = 1;
-                
-                const gridSize = Math.min(window.innerWidth, window.innerHeight) / 10;
-                for (let x = 0; x < lienzoJuego.width; x += gridSize) {
-                    contexto.beginPath();
-                    contexto.moveTo(x, 0);
-                    contexto.lineTo(x, lienzoJuego.height);
-                    contexto.stroke();
-                }
-                
-                for (let y = 0; y < lienzoJuego.height; y += gridSize) {
-                    contexto.beginPath();
-                    contexto.moveTo(0, y);
-                    contexto.lineTo(lienzoJuego.width, y);
-                    contexto.stroke();
-                }
-                
-                contexto.fillStyle = 'white';
-                contexto.font = `${clamp(16, 3, 20)}px Arial`;
-                contexto.textAlign = 'center';
-                contexto.fillText('¡Juego con controles predefinidos!', lienzoJuego.width/2, 50);
-                contexto.font = `${clamp(12, 2.5, 16)}px Arial`;
-                contexto.fillText('Presiona los botones para interactuar', lienzoJuego.width/2, 80);
+            const c = Math.sqrt(a * a + b * b);
+            valorC.textContent = c.toFixed(2);
+            resultadoC.style.display = 'block';
+        }
+
+        // Función para calcular ángulos
+        function calcularAngulos() {
+            const a = parseFloat(inputA_ang.value);
+            const b = parseFloat(inputB_ang.value);
+            const c = parseFloat(inputC_ang.value);
+            
+            if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
+                alert('Por favor, ingresa valores válidos para los lados (números mayores que 0)');
+                return;
+            }
+
+            // Verificar desigualdad triangular
+            if (a + b <= c || a + c <= b || b + c <= a) {
+                alert('Los lados no forman un triángulo válido');
+                return;
             }
             
-            function clamp(min, vw, max) {
-                return Math.min(Math.max(window.innerWidth * vw / 100, min), max);
+            // Ley de los cosenos
+            const cosA = (b * b + c * c - a * a) / (2 * b * c);
+            const A = Math.acos(cosA) * (180 / Math.PI);
+
+            const cosB = (a * a + c * c - b * b) / (2 * a * c);
+            const B = Math.acos(cosB) * (180 / Math.PI);
+
+            const cosC = (a * a + b * b - c * c) / (2 * a * b);
+            const C = Math.acos(cosC) * (180 / Math.PI);
+
+            document.getElementById('valor-A').textContent = A.toFixed(2);
+            document.getElementById('valor-B').textContent = B.toFixed(2);
+            document.getElementById('valor-C').textContent = C.toFixed(2);
+            resultadosAngulos.style.display = 'block';
+        }
+
+        // Scroll listener para navbar (actualizar active basado en scroll)
+        carousel.addEventListener('scroll', () => {
+            const index = Math.round(carousel.scrollTop / itemHeight);
+            const clampedIndex = Math.max(0, Math.min(index, letras.length - 1));
+            if (clampedIndex !== activeIndex) {
+                activeIndex = clampedIndex;
+                updateNavbar();
             }
         });
+
+        // Funciones Save/Load
+        window.guardar = function(letra) {
+            datosGuardados[letra] = expresionActual || '0';
+            document.getElementById(`num-${letra}`).textContent = datosGuardados[letra];
+            guardarEnLocalStorage();
+        };
+
+        window.cargar = function(letra) {
+            const valor = datosGuardados[letra];
+            if (expresionActual === '' || resultadoPresente) {
+                expresionActual = valor;
+                cursorPos = valor.length;
+                resultadoPresente = false;
+            } else {
+                insertarTexto(valor);
+            }
+            pantalla.classList.remove('resultado-presente');
+            actualizarPantalla();
+        };
+
+        // Función para insertar texto en la posición del cursor
+        function insertarTexto(texto) {
+            expresionActual = expresionActual.slice(0, cursorPos) + texto + expresionActual.slice(cursorPos);
+            cursorPos += texto.length;
+        }
+
+        // Función para manejar tap en la pantalla
+        function handleTap(e) {
+            e.preventDefault();
+            const rect = pantalla.getBoundingClientRect();
+            const x = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - rect.left;
+            const style = window.getComputedStyle(pantalla);
+            const paddingRight = parseFloat(style.paddingRight);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.font = `${style.fontSize} ${style.fontFamily}`;
+            const textWidth = ctx.measureText(expresionActual).width;
+            const textStartX = pantalla.clientWidth - textWidth - paddingRight;
+            let relativeX = x - textStartX;
+            if (relativeX < 0) {
+                cursorPos = 0;
+            } else if (relativeX > textWidth) {
+                cursorPos = expresionActual.length;
+            } else {
+                let current = 0;
+                cursorPos = expresionActual.length;
+                for (let i = 0; i < expresionActual.length; i++) {
+                    const char = expresionActual[i];
+                    const charWidth = ctx.measureText(char).width;
+                    if (current + charWidth / 2 > relativeX) {
+                        cursorPos = i;
+                        break;
+                    }
+                    current += charWidth;
+                }
+            }
+            actualizarPantalla();
+        }
+
+        // Event listeners para pantalla
+        pantalla.addEventListener('click', handleTap);
+        pantalla.addEventListener('touchstart', handleTap, { passive: false });
+
+        // Event listeners para teclado
+        document.querySelectorAll('.tecla').forEach(tecla => {
+            tecla.addEventListener('click', () => {
+                const valor = tecla.dataset.value;
+                manejarTecla(valor);
+            });
+        });
+
+        // Event listener para atajos de teclado
+        document.addEventListener('keydown', (e) => {
+            // Si el foco está en un input, no interferir con el comportamiento normal
+            if (document.activeElement.tagName === 'INPUT') {
+                return;
+            }
+
+            // Evitar el comportamiento por defecto solo para las teclas que usamos
+            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+                 '+', '-', '*', '/', 'Enter', 'Backspace', '.', '%'].includes(e.key)) {
+                e.preventDefault();
+            }
+            
+            // Mapeo de teclas físicas a funciones de la calculadora
+            switch(e.key) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    manejarTecla(e.key);
+                    break;
+                case '+':
+                    manejarTecla('+');
+                    break;
+                case '-':
+                    manejarTecla('-');
+                    break;
+                case '*':
+                    manejarTecla('*');
+                    break;
+                case '/':
+                    manejarTecla('/');
+                    break;
+                case 'Enter':
+                    manejarTecla('=');
+                    break;
+                case 'Backspace':
+                    manejarTecla('DEL');
+                    break;
+                case '.':
+                    manejarTecla('.');
+                    break;
+                case '%':
+                    manejarTecla('%');
+                    break;
+            }
+        });
+
+        function actualizarPantalla() {
+            textoIzq.textContent = expresionActual.slice(0, cursorPos);
+            textoDer.textContent = expresionActual.slice(cursorPos);
+            cursorEl.style.display = (expresionActual === '' || resultadoPresente) ? 'none' : 'block';
+        }
+
+        function manejarTecla(valor) {
+            if (valor === 'C') {
+                expresionActual = '';
+                cursorPos = 0;
+                resultadoPresente = false;
+                pantalla.classList.remove('resultado-presente');
+                actualizarPantalla();
+            } else if (valor === 'DEL') {
+                if (cursorPos > 0) {
+                    expresionActual = expresionActual.slice(0, cursorPos - 1) + expresionActual.slice(cursorPos);
+                    cursorPos--;
+                }
+                pantalla.classList.remove('resultado-presente');
+                resultadoPresente = false;
+                actualizarPantalla();
+            } else if (valor === '=') {
+                if (expresionActual === '') {
+                    return;
+                }
+                try {
+                    let expr = expresionActual
+                        .replace('÷', '/')
+                        .replace('×', '*')
+                        .replace('%', '/100')
+                        .replace(/√\(/g, 'Math.sqrt(');
+                    // Auto-cerrar paréntesis para √ y otros
+                    const openParens = (expr.match(/\(/g) || []).length;
+                    const closeParens = (expr.match(/\)/g) || []).length;
+                    const missing = openParens - closeParens;
+                    if (missing > 0) {
+                        expr += ')'.repeat(missing);
+                    }
+                    const resultado = eval(expr);
+                    expresionActual = resultado.toString();
+                    cursorPos = expresionActual.length;
+                    pantalla.classList.add('resultado-presente');
+                    resultadoPresente = true;
+                    actualizarPantalla();
+                } catch (e) {
+                    cursorEl.style.display = 'none';
+                    textoIzq.textContent = 'Error';
+                    textoDer.textContent = '';
+                    setTimeout(() => {
+                        expresionActual = '';
+                        cursorPos = 0;
+                        pantalla.classList.remove('resultado-presente');
+                        resultadoPresente = false;
+                        actualizarPantalla();
+                    }, 1000);
+                }
+            } else if (['+', '-', '*', '/', '%', '.', '√'].includes(valor)) {
+                let toInsert;
+                if (resultadoPresente) {
+                    resultadoPresente = false;
+                    pantalla.classList.remove('resultado-presente');
+                    expresionActual = '';
+                    cursorPos = 0;
+                }
+                if (expresionActual === '') {
+                    if (valor === '√') {
+                        toInsert = '√(';
+                    } else {
+                        toInsert = getDisplayValue(valor);
+                        expresionActual = '0';
+                        cursorPos = 1;
+                    }
+                } else {
+                    if (valor === '√') {
+                        toInsert = '√(';
+                        if (cursorPos > 0 && /[0-9.]/.test(expresionActual.charAt(cursorPos - 1))) {
+                            toInsert = '×' + toInsert;
+                        }
+                    } else {
+                        toInsert = getDisplayValue(valor);
+                    }
+                }
+                insertarTexto(toInsert);
+                actualizarPantalla();
+            } else {
+                // Número
+                if (resultadoPresente) {
+                    expresionActual = valor;
+                    cursorPos = 1;
+                    resultadoPresente = false;
+                    pantalla.classList.remove('resultado-presente');
+                } else if (expresionActual === '') {
+                    expresionActual = valor;
+                    cursorPos = 1;
+                } else {
+                    insertarTexto(valor);
+                }
+                actualizarPantalla();
+            }
+        }
+
+        function getDisplayValue(valor) {
+            switch (valor) {
+                case '+': return '+';
+                case '-': return '-';
+                case '*': return '×';
+                case '/': return '÷';
+                case '%': return '%';
+                case '.': return '.';
+                default: return valor;
+            }
+        }
+
+        // Extras
+        document.getElementById('limpiar-datos').addEventListener('click', () => {
+            document.getElementById('modal-limpiar').style.display = 'flex';
+        });
+
+        document.getElementById('confirmar-si').addEventListener('click', () => {
+            letras.forEach(letra => {
+                datosGuardados[letra] = '0';
+                document.getElementById(`num-${letra}`).textContent = '0';
+            });
+            guardarEnLocalStorage();
+            document.getElementById('modal-limpiar').style.display = 'none';
+        });
+
+        document.getElementById('confirmar-no').addEventListener('click', () => {
+            document.getElementById('modal-limpiar').style.display = 'none';
+        });
+
+        document.getElementById('cerrar-app').addEventListener('click', () => {
+            if (confirm('¿Cerrar la app?')) {
+                window.close();
+            }
+        });
+
+        // Event listeners para pantallas
+        plusBtn.addEventListener('click', togglePlusScreen);
+        volverPlusBtn.addEventListener('click', volverAPlusScreen);
+        volverAngulosBtn.addEventListener('click', volverAAngulosScreen);
+        calcularBtn.addEventListener('click', calcularHipotenusa);
+        calcularAngulosBtn.addEventListener('click', calcularAngulos);
+
+        // Permitir calcular con Enter
+        inputA.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calcularHipotenusa();
+            }
+        });
+
+        inputB.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calcularHipotenusa();
+            }
+        });
+
+        inputA_ang.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calcularAngulos();
+            }
+        });
+
+        inputB_ang.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calcularAngulos();
+            }
+        });
+
+        inputC_ang.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calcularAngulos();
+            }
+        });
+
+        // Inicializar
+        inicializarCarousel();
+        inicializarPlusScreen();
+        actualizarPantalla(); // Asegurar vacío al inicio
     </script>
 </body>
 </html>
