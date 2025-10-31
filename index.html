@@ -195,7 +195,7 @@
         }
 
         .slot-label {
-            font-weight: bold;
+            font-weight: bool;
             min-width: 20px;
             color: var(--text-secondary);
         }
@@ -568,6 +568,21 @@
             background-color: #0056b3;
         }
 
+        .btn-m2 {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+
+        .btn-m2:active {
+            background-color: #45a049;
+        }
+
         .resultado {
             margin-top: 20px;
             padding: 15px;
@@ -649,6 +664,88 @@
             flex-direction: column;
             gap: 10px;
             width: 80%;
+        }
+
+        /* Pantalla Trapecio */
+        .trapecio-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            z-index: 60;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .trapecio-screen.active {
+            display: flex;
+        }
+
+        .trapecio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trapecio-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .trapecio-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            overflow-y: auto;
+            padding-bottom: 20px;
+            scroll-snap-type: y mandatory;
+        }
+
+        .trapecio-section {
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .trapecio-img {
+            max-width: 80%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .input-sections {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .resultado-trapecio {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 200px;
+            color: #000000;
         }
     </style>
 </head>
@@ -785,6 +882,69 @@
             </div>
         </div>
 
+        <!-- Pantalla Trapecio - VERSIÓN CORREGIDA -->
+        <div id="trapecio-screen" class="trapecio-screen">
+            <div class="trapecio-header">
+                <button class="btn-back" id="volver-trapecio">← Volver</button>
+                <div class="trapecio-title">Área del Trapecio</div>
+                <button class="btn-m2" id="toggle-m2">m²</button>
+            </div>
+            <div class="trapecio-content">
+                <div class="trapecio-section">
+                    <img src="https://i.ibb.co/PvQDSsqB/image.png" alt="Trapecio" class="trapecio-img">
+                </div>
+                <div class="trapecio-section">
+                    <div class="input-sections">
+                        <!-- MODO COMPLETO -->
+                        <div id="full-inputs" class="input-group">
+                            <div class="input-field">
+                                <span class="input-label">a =</span>
+                                <input type="number" id="input-a-trap" class="input-box" placeholder="Ingresa base a" inputmode="numeric">
+                            </div>
+                            <div class="input-field">
+                                <span class="input-label">b =</span>
+                                <input type="number" id="input-b-trap" class="input-box" placeholder="Ingresa base b" inputmode="numeric">
+                            </div>
+                            <div class="input-field">
+                                <span class="input-label">A =</span>
+                                <input type="number" id="input-A-trap" class="input-box" placeholder="Ingresa lado A" inputmode="numeric">
+                            </div>
+                            <div class="input-field">
+                                <span class="input-label">B =</span>
+                                <input type="number" id="input-B-trap" class="input-box" placeholder="Ingresa lado B" inputmode="numeric">
+                            </div>
+                            <div class="input-field">
+                                <span class="input-label">h =</span>
+                                <input type="number" id="input-h-full" class="input-box" placeholder="Ingresa altura h" inputmode="numeric">
+                            </div>
+                        </div>
+                        
+                        <!-- MODO SIMPLIFICADO -->
+                        <div id="simpl-inputs" class="input-group" style="display: none;">
+                            <div class="input-field">
+                                <span class="input-label">a×b =</span>
+                                <input type="number" id="input-ab-trap" class="input-box" placeholder="Ingresa a×b" inputmode="numeric">
+                            </div>
+                            <div class="input-field">
+                                <span class="input-label">A×B =</span>
+                                <input type="number" id="input-AB-trap" class="input-box" placeholder="Ingresa A×B" inputmode="numeric">
+                            </div>
+                            <div class="input-field">
+                                <span class="input-label">h =</span>
+                                <input type="number" id="input-h-simpl" class="input-box" placeholder="Ingresa altura h" inputmode="numeric">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-calcular" id="calcular-area-trapecio">Calcular</button>
+                </div>
+                <div class="trapecio-section" id="resultado-section" style="display: none;">
+                    <div class="resultado-trapecio" id="resultado-area">
+                        Área = <span id="valor-area"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal para confirmar limpiar datos -->
         <div id="modal-limpiar" class="modal">
             <div class="modal-content">
@@ -796,573 +956,593 @@
     </div>
 
     <script>
-        // Variables globales
-        let pantalla = document.getElementById('pantalla');
-        let textoIzq = document.getElementById('texto-izq');
-        let textoDer = document.getElementById('texto-der');
-        let cursorEl = document.getElementById('cursor');
-        let expresionActual = '';
-        let resultadoPresente = false;
-        let cursorPos = 0;
-        let datosGuardados = {}; // Objeto para A-K: {A: '0', B: '0', ...}
+    // Variables globales
+    let pantalla = document.getElementById('pantalla');
+    let textoIzq = document.getElementById('texto-izq');
+    let textoDer = document.getElementById('texto-der');
+    let cursorEl = document.getElementById('cursor');
+    let expresionActual = '';
+    let resultadoPresente = false;
+    let cursorPos = 0;
+    let datosGuardados = {};
+    let simplifiedMode = false;
 
-        // Inicializar slots A-K
-        const letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
-        const carousel = document.getElementById('carousel');
-        const navbar = document.getElementById('navbar');
-        let activeIndex = 0;
-        let itemHeight = 0; // Se calculará dinámicamente
+    // Inicializar slots A-K
+    const letras = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
+    const carousel = document.getElementById('carousel');
+    const navbar = document.getElementById('navbar');
+    let activeIndex = 0;
+    let itemHeight = 0;
 
-        // Pantallas
-        const plusScreen = document.getElementById('plus-screen');
-        const pitagorasScreen = document.getElementById('pitagoras-screen');
-        const angulosScreen = document.getElementById('angulos-screen');
-        const plusBtn = document.getElementById('plus');
-        const vinetasContainer = document.getElementById('vinetas-container');
-        const volverPlusBtn = document.getElementById('volver-plus');
-        const volverAngulosBtn = document.getElementById('volver-angulos');
-        const calcularBtn = document.getElementById('calcular-hipotenusa');
-        const calcularAngulosBtn = document.getElementById('calcular-angulos');
-        const inputA = document.getElementById('input-a');
-        const inputB = document.getElementById('input-b');
-        const inputA_ang = document.getElementById('input-a-ang');
-        const inputB_ang = document.getElementById('input-b-ang');
-        const inputC_ang = document.getElementById('input-c-ang');
-        const resultadoC = document.getElementById('resultado-c');
-        const valorC = document.getElementById('valor-c');
-        const resultadosAngulos = document.getElementById('resultados-angulos');
+    // Pantallas
+    const plusScreen = document.getElementById('plus-screen');
+    const pitagorasScreen = document.getElementById('pitagoras-screen');
+    const angulosScreen = document.getElementById('angulos-screen');
+    const trapecioScreen = document.getElementById('trapecio-screen');
+    const plusBtn = document.getElementById('plus');
+    const vinetasContainer = document.getElementById('vinetas-container');
+    const volverPlusBtn = document.getElementById('volver-plus');
+    const volverAngulosBtn = document.getElementById('volver-angulos');
+    const volverTrapecioBtn = document.getElementById('volver-trapecio');
+    const toggleM2Btn = document.getElementById('toggle-m2');
+    const calcularBtn = document.getElementById('calcular-hipotenusa');
+    const calcularAngulosBtn = document.getElementById('calcular-angulos');
+    const calcularAreaTrapecioBtn = document.getElementById('calcular-area-trapecio');
+    const inputA = document.getElementById('input-a');
+    const inputB = document.getElementById('input-b');
+    const inputA_ang = document.getElementById('input-a-ang');
+    const inputB_ang = document.getElementById('input-b-ang');
+    const inputC_ang = document.getElementById('input-c-ang');
+    const inputA_trap = document.getElementById('input-a-trap');
+    const inputB_trap = document.getElementById('input-b-trap');
+    const inputA_leg = document.getElementById('input-A-trap');
+    const inputB_leg = document.getElementById('input-B-trap');
+    const inputAb_trap = document.getElementById('input-ab-trap');
+    const inputAB_trap = document.getElementById('input-AB-trap');
+    const inputH_full = document.getElementById('input-h-full');
+    const inputH_simpl = document.getElementById('input-h-simpl');
+    const resultadoC = document.getElementById('resultado-c');
+    const valorC = document.getElementById('valor-c');
+    const resultadosAngulos = document.getElementById('resultados-angulos');
+    const resultadoSection = document.getElementById('resultado-section');
+    const resultadoArea = document.getElementById('resultado-area');
+    const valorArea = document.getElementById('valor-area');
 
-        // Dark Mode
-        const appContainer = document.querySelector('.app-container');
-        const darkToggle = document.getElementById('dark-toggle');
-        let darkMode = localStorage.getItem('darkMode') === 'true';
+    // Dark Mode
+    const appContainer = document.querySelector('.app-container');
+    const darkToggle = document.getElementById('dark-toggle');
+    let darkMode = localStorage.getItem('darkMode') === 'true';
 
+    if (darkMode) {
+        appContainer.classList.add('dark-mode');
+        darkToggle.textContent = '☀️';
+    } else {
+        darkToggle.textContent = '🌙';
+    }
+
+    darkToggle.addEventListener('click', () => {
+        darkMode = !darkMode;
         if (darkMode) {
             appContainer.classList.add('dark-mode');
             darkToggle.textContent = '☀️';
         } else {
+            appContainer.classList.remove('dark-mode');
             darkToggle.textContent = '🌙';
         }
+        localStorage.setItem('darkMode', darkMode.toString());
+    });
 
-        darkToggle.addEventListener('click', () => {
-            darkMode = !darkMode;
-            if (darkMode) {
-                appContainer.classList.add('dark-mode');
-                darkToggle.textContent = '☀️';
-            } else {
-                appContainer.classList.remove('dark-mode');
-                darkToggle.textContent = '🌙';
+    function cargarDesdeLocalStorage() {
+        const guardados = localStorage.getItem('calculadora_datos');
+        if (guardados) {
+            datosGuardados = JSON.parse(guardados);
+        } else {
+            letras.forEach(letra => {
+                datosGuardados[letra] = '0';
+            });
+        }
+    }
+
+    function guardarEnLocalStorage() {
+        localStorage.setItem('calculadora_datos', JSON.stringify(datosGuardados));
+    }
+
+    function inicializarCarousel() {
+        cargarDesdeLocalStorage();
+        letras.forEach((letra, index) => {
+            if (!(letra in datosGuardados)) {
+                datosGuardados[letra] = '0';
             }
-            localStorage.setItem('darkMode', darkMode.toString());
+            const item = document.createElement('div');
+            item.className = 'carousel-item';
+            item.innerHTML = `
+                <div class="slot">
+                    <span class="slot-label">${letra})</span>
+                    <button class="btn-save" onclick="guardar('${letra}')">Save</button>
+                    <button class="btn-load" onclick="cargar('${letra}')">Load</button>
+                    <span class="numero-guardado" id="num-${letra}">${datosGuardados[letra]}</span>
+                </div>
+            `;
+            carousel.appendChild(item);
+
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.onclick = () => scrollToIndex(index);
+            navbar.appendChild(dot);
         });
 
-        function cargarDesdeLocalStorage() {
-            const guardados = localStorage.getItem('calculadora_datos');
-            if (guardados) {
-                datosGuardados = JSON.parse(guardados);
-            } else {
-                letras.forEach(letra => {
-                    datosGuardados[letra] = '0';
-                });
+        setTimeout(() => {
+            const firstItem = carousel.querySelector('.carousel-item');
+            if (firstItem) {
+                itemHeight = firstItem.offsetHeight + 6;
             }
-        }
+            updateNavbar();
+        }, 100);
+    }
 
-        function guardarEnLocalStorage() {
-            localStorage.setItem('calculadora_datos', JSON.stringify(datosGuardados));
-        }
+    function inicializarPlusScreen() {
+        const vineta1 = document.createElement('div');
+        vineta1.className = 'vineta';
+        vineta1.innerHTML = `
+            <img src="https://i.ibb.co/jk9G89QJ/image.png" alt="Triángulo rectángulo" class="vineta-img">
+            <div class="vineta-title">Teorema de Pitágoras</div>
+        `;
+        vineta1.addEventListener('click', () => {
+            mostrarPitagorasScreen();
+        });
+        vinetasContainer.appendChild(vineta1);
 
-        function inicializarCarousel() {
-            cargarDesdeLocalStorage();
-            letras.forEach((letra, index) => {
-                if (!(letra in datosGuardados)) {
-                    datosGuardados[letra] = '0';
-                }
-                const item = document.createElement('div');
-                item.className = 'carousel-item';
-                item.innerHTML = `
-                    <div class="slot">
-                        <span class="slot-label">${letra})</span>
-                        <button class="btn-save" onclick="guardar('${letra}')">Save</button>
-                        <button class="btn-load" onclick="cargar('${letra}')">Load</button>
-                        <span class="numero-guardado" id="num-${letra}">${datosGuardados[letra]}</span>
-                    </div>
-                `;
-                carousel.appendChild(item);
+        const vineta2 = document.createElement('div');
+        vineta2.className = 'vineta';
+        vineta2.innerHTML = `
+            <img src="https://i.ibb.co/gZRf2j3z/image.png" alt="Triángulo" class="vineta-img">
+            <div class="vineta-title">Ángulos del Triángulo</div>
+        `;
+        vineta2.addEventListener('click', () => {
+            mostrarAngulosScreen();
+        });
+        vinetasContainer.appendChild(vineta2);
 
-                // Navbar dots
-                const dot = document.createElement('div');
-                dot.className = 'nav-dot';
-                dot.onclick = () => scrollToIndex(index);
-                navbar.appendChild(dot);
-            });
+        const vineta3 = document.createElement('div');
+        vineta3.className = 'vineta';
+        vineta3.innerHTML = `
+            <img src="https://i.ibb.co/PvQDSsqB/image.png" alt="Trapecio" class="vineta-img">
+            <div class="vineta-title">Área del Trapecio</div>
+        `;
+        vineta3.addEventListener('click', () => {
+            mostrarTrapecioScreen();
+        });
+        vinetasContainer.appendChild(vineta3);
 
-            // Calcular altura aproximada de cada item después de renderizar
-            setTimeout(() => {
-                const firstItem = carousel.querySelector('.carousel-item');
-                if (firstItem) {
-                    itemHeight = firstItem.offsetHeight + 6; // + padding/margin approx
-                }
-                updateNavbar();
-            }, 100);
-        }
-
-        function inicializarPlusScreen() {
-            // Viñeta 1 - Teorema de Pitágoras
-            const vineta1 = document.createElement('div');
-            vineta1.className = 'vineta';
-            vineta1.innerHTML = `
-                <img src="https://i.ibb.co/jk9G89QJ/image.png" alt="Triángulo rectángulo" class="vineta-img">
-                <div class="vineta-title">Teorema de Pitágoras</div>
+        for (let i = 3; i < 6; i++) {
+            const vineta = document.createElement('div');
+            vineta.className = 'vineta vineta-vacia';
+            vineta.innerHTML = `
+                <div>Viñeta ${i + 1}</div>
+                <div class="vineta-placeholder">(Vacía - Próximamente)</div>
             `;
-            vineta1.addEventListener('click', () => {
-                mostrarPitagorasScreen();
-            });
-            vinetasContainer.appendChild(vineta1);
+            vinetasContainer.appendChild(vineta);
+        }
+    }
 
-            // Viñeta 2 - Ángulos del Triángulo
-            const vineta2 = document.createElement('div');
-            vineta2.className = 'vineta';
-            vineta2.innerHTML = `
-                <img src="https://i.ibb.co/gZRf2j3z/image.png" alt="Triángulo" class="vineta-img">
-                <div class="vineta-title">Ángulos del Triángulo</div>
-            `;
-            vineta2.addEventListener('click', () => {
-                mostrarAngulosScreen();
-            });
-            vinetasContainer.appendChild(vineta2);
+    function scrollToIndex(index) {
+        const scrollTop = index * itemHeight;
+        carousel.scrollTop = scrollTop;
+        activeIndex = index;
+        updateNavbar();
+    }
 
-            // Crear viñetas vacías restantes (3 a 6)
-            for (let i = 2; i < 6; i++) {
-                const vineta = document.createElement('div');
-                vineta.className = 'vineta vineta-vacia';
-                vineta.innerHTML = `
-                    <div>Viñeta ${i + 1}</div>
-                    <div class="vineta-placeholder">(Vacía - Próximamente)</div>
-                `;
-                vinetasContainer.appendChild(vineta);
+    function updateNavbar() {
+        const dots = navbar.querySelectorAll('.nav-dot');
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === activeIndex);
+        });
+    }
+
+    function togglePlusScreen() {
+        const isActive = plusScreen.classList.toggle('active');
+        plusBtn.textContent = isActive ? '←' : '+';
+        plusBtn.classList.toggle('hidden', false);
+    }
+
+    function mostrarPitagorasScreen() {
+        plusScreen.classList.remove('active');
+        pitagorasScreen.classList.add('active');
+        plusBtn.textContent = '+';
+        plusBtn.classList.add('hidden');
+        inputA.value = '';
+        inputB.value = '';
+        resultadoC.style.display = 'none';
+    }
+
+    function volverAPlusScreen() {
+        pitagorasScreen.classList.remove('active');
+        plusScreen.classList.add('active');
+        plusBtn.classList.remove('hidden');
+        plusBtn.textContent = '←';
+    }
+
+    function mostrarAngulosScreen() {
+        plusScreen.classList.remove('active');
+        angulosScreen.classList.add('active');
+        plusBtn.textContent = '+';
+        plusBtn.classList.add('hidden');
+        inputA_ang.value = '';
+        inputB_ang.value = '';
+        inputC_ang.value = '';
+        resultadosAngulos.style.display = 'none';
+    }
+
+    function volverAAngulosScreen() {
+        angulosScreen.classList.remove('active');
+        plusScreen.classList.add('active');
+        plusBtn.classList.remove('hidden');
+        plusBtn.textContent = '←';
+    }
+
+    function mostrarTrapecioScreen() {
+        plusScreen.classList.remove('active');
+        trapecioScreen.classList.add('active');
+        plusBtn.textContent = '+';
+        plusBtn.classList.add('hidden');
+        simplifiedMode = false;
+        document.getElementById('full-inputs').style.display = 'flex';
+        document.getElementById('simpl-inputs').style.display = 'none';
+        inputA_trap.value = '';
+        inputB_trap.value = '';
+        inputA_leg.value = '';
+        inputB_leg.value = '';
+        inputAb_trap.value = '';
+        inputAB_trap.value = '';
+        inputH_full.value = '';
+        inputH_simpl.value = '';
+        resultadoSection.style.display = 'none';
+    }
+
+    function volverATrapecioScreen() {
+        trapecioScreen.classList.remove('active');
+        plusScreen.classList.add('active');
+        plusBtn.classList.remove('hidden');
+        plusBtn.textContent = '←';
+    }
+
+    function toggleSimplified() {
+        simplifiedMode = !simplifiedMode;
+        document.getElementById('full-inputs').style.display = simplifiedMode ? 'none' : 'flex';
+        document.getElementById('simpl-inputs').style.display = simplifiedMode ? 'flex' : 'none';
+        
+        // Limpiar todos los campos al cambiar modo
+        inputA_trap.value = '';
+        inputB_trap.value = '';
+        inputA_leg.value = '';
+        inputB_leg.value = '';
+        inputH_full.value = '';
+        inputAb_trap.value = '';
+        inputAB_trap.value = '';
+        inputH_simpl.value = '';
+        
+        resultadoSection.style.display = 'none';
+    }
+
+    function calcularHipotenusa() {
+        const a = parseFloat(inputA.value);
+        const b = parseFloat(inputB.value);
+        
+        if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+            alert('Por favor, ingresa valores válidos para ambos catetos (números mayores que 0)');
+            return;
+        }
+        
+        const c = Math.sqrt(a * a + b * b);
+        valorC.textContent = c.toFixed(2);
+        resultadoC.style.display = 'block';
+    }
+
+    function calcularAngulos() {
+    const a = parseFloat(inputA_ang.value);
+    const b = parseFloat(inputB_ang.value);
+    const c = parseFloat(inputC_ang.value);
+    
+    if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
+        alert('Por favor, ingresa valores válidos para los lados (números mayores que 0)');
+        return;
+    }
+
+    if (a + b <= c || a + c <= b || b + c <= a) {
+        alert('Los lados no forman un triángulo válido');
+        return;
+    }
+    
+    // Calcular ángulos usando Ley de Cosenos
+    // Ángulo A (opuesto al lado a)
+    const cosA = (b * b + c * c - a * a) / (2 * b * c);
+    const A = Math.acos(cosA) * (180 / Math.PI);
+
+    // Ángulo B (opuesto al lado b)
+    const cosB = (a * a + c * c - b * b) / (2 * a * c);
+    const B = Math.acos(cosB) * (180 / Math.PI);
+
+    // Ángulo C (opuesto al lado c)
+    const cosC = (a * a + b * b - c * c) / (2 * a * b);
+    const C = Math.acos(cosC) * (180 / Math.PI);
+
+    // ASIGNACIÓN CORREGIDA - Los ángulos van con sus lados opuestos
+    document.getElementById('valor-A').textContent = A.toFixed(2);
+    document.getElementById('valor-B').textContent = B.toFixed(2);
+    document.getElementById('valor-C').textContent = C.toFixed(2);
+    
+    resultadosAngulos.style.display = 'block';
+}
+    function calcularAreaTrapecio() {
+        let h, ab, AB;
+        
+        if (simplifiedMode) {
+            // MODO SIMPLIFICADO
+            h = parseFloat(inputH_simpl.value);
+            ab = parseFloat(inputAb_trap.value);
+            AB = parseFloat(inputAB_trap.value);
+            
+            if (isNaN(h) || isNaN(ab) || isNaN(AB) || h <= 0 || ab <= 0 || AB <= 0) {
+                alert('Por favor, ingresa valores válidos (números mayores que 0)');
+                return;
             }
+        } else {
+            // MODO COMPLETO
+            h = parseFloat(inputH_full.value);
+            const a = parseFloat(inputA_trap.value);
+            const b = parseFloat(inputB_trap.value);
+            const A = parseFloat(inputA_leg.value);
+            const B = parseFloat(inputB_leg.value);
+            
+            if (isNaN(h) || isNaN(a) || isNaN(b) || isNaN(A) || isNaN(B) || 
+                h <= 0 || a <= 0 || b <= 0 || A <= 0 || B <= 0) {
+                alert('Por favor, ingresa valores válidos (números mayores que 0)');
+                return;
+            }
+            
+            ab = a * b;
+            AB = A * B;
         }
+        
+        // Aplicar la fórmula: (h/3) × [ab + AB + √(ab × AB)]
+        const raiz = Math.sqrt(ab * AB);
+        const suma = ab + AB + raiz;
+        const area = (h / 3) * suma;
+        
+        valorArea.textContent = area.toFixed(2);
+        resultadoSection.style.display = 'flex';
+    }
 
-        function scrollToIndex(index) {
-            const scrollTop = index * itemHeight;
-            carousel.scrollTop = scrollTop;
-            activeIndex = index;
+    carousel.addEventListener('scroll', () => {
+        const index = Math.round(carousel.scrollTop / itemHeight);
+        const clampedIndex = Math.max(0, Math.min(index, letras.length - 1));
+        if (clampedIndex !== activeIndex) {
+            activeIndex = clampedIndex;
             updateNavbar();
         }
+    });
 
-        function updateNavbar() {
-            const dots = navbar.querySelectorAll('.nav-dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === activeIndex);
-            });
+    window.guardar = function(letra) {
+        datosGuardados[letra] = expresionActual || '0';
+        document.getElementById(`num-${letra}`).textContent = datosGuardados[letra];
+        guardarEnLocalStorage();
+    };
+
+    window.cargar = function(letra) {
+        const valor = datosGuardados[letra];
+        if (expresionActual === '' || resultadoPresente) {
+            expresionActual = valor;
+            cursorPos = valor.length;
+            resultadoPresente = false;
+        } else {
+            insertarTexto(valor);
         }
+        pantalla.classList.remove('resultado-presente');
+        actualizarPantalla();
+    };
 
-        // Funciones para navegación entre pantallas
-        function togglePlusScreen() {
-            const isActive = plusScreen.classList.toggle('active');
-            plusBtn.textContent = isActive ? '←' : '+';
-            plusBtn.classList.toggle('hidden', false); // Asegurar visible al togglear
-        }
+    function insertarTexto(texto) {
+        expresionActual = expresionActual.slice(0, cursorPos) + texto + expresionActual.slice(cursorPos);
+        cursorPos += texto.length;
+    }
 
-        function mostrarPitagorasScreen() {
-            plusScreen.classList.remove('active');
-            pitagorasScreen.classList.add('active');
-            plusBtn.textContent = '+';
-            plusBtn.classList.add('hidden'); // Ocultar botón plus al entrar a viñeta
-            // Limpiar campos al mostrar
-            inputA.value = '';
-            inputB.value = '';
-            resultadoC.style.display = 'none';
-        }
-
-        function volverAPlusScreen() {
-            pitagorasScreen.classList.remove('active');
-            plusScreen.classList.add('active');
-            plusBtn.classList.remove('hidden'); // Mostrar botón plus al salir de viñeta
-            plusBtn.textContent = '←';
-        }
-
-        function mostrarAngulosScreen() {
-            plusScreen.classList.remove('active');
-            angulosScreen.classList.add('active');
-            plusBtn.textContent = '+';
-            plusBtn.classList.add('hidden'); // Ocultar botón plus al entrar a viñeta
-            // Limpiar campos al mostrar
-            inputA_ang.value = '';
-            inputB_ang.value = '';
-            inputC_ang.value = '';
-            resultadosAngulos.style.display = 'none';
-        }
-
-        function volverAAngulosScreen() {
-            angulosScreen.classList.remove('active');
-            plusScreen.classList.add('active');
-            plusBtn.classList.remove('hidden'); // Mostrar botón plus al salir de viñeta
-            plusBtn.textContent = '←';
-        }
-
-        // Función para calcular hipotenusa
-        function calcularHipotenusa() {
-            const a = parseFloat(inputA.value);
-            const b = parseFloat(inputB.value);
-            
-            if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
-                alert('Por favor, ingresa valores válidos para ambos catetos (números mayores que 0)');
-                return;
+    function handleTap(e) {
+        e.preventDefault();
+        const rect = pantalla.getBoundingClientRect();
+        const x = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - rect.left;
+        const style = window.getComputedStyle(pantalla);
+        const paddingRight = parseFloat(style.paddingRight);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.font = `${style.fontSize} ${style.fontFamily}`;
+        const textWidth = ctx.measureText(expresionActual).width;
+        const textStartX = pantalla.clientWidth - textWidth - paddingRight;
+        let relativeX = x - textStartX;
+        if (relativeX < 0) {
+            cursorPos = 0;
+        } else if (relativeX > textWidth) {
+            cursorPos = expresionActual.length;
+        } else {
+            let current = 0;
+            cursorPos = expresionActual.length;
+            for (let i = 0; i < expresionActual.length; i++) {
+                const char = expresionActual[i];
+                const charWidth = ctx.measureText(char).width;
+                if (current + charWidth / 2 > relativeX) {
+                    cursorPos = i;
+                    break;
+                }
+                current += charWidth;
             }
-            
-            const c = Math.sqrt(a * a + b * b);
-            valorC.textContent = c.toFixed(2);
-            resultadoC.style.display = 'block';
         }
+        actualizarPantalla();
+    }
 
-        // Función para calcular ángulos
-        function calcularAngulos() {
-            const a = parseFloat(inputA_ang.value);
-            const b = parseFloat(inputB_ang.value);
-            const c = parseFloat(inputC_ang.value);
-            
-            if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
-                alert('Por favor, ingresa valores válidos para los lados (números mayores que 0)');
-                return;
-            }
+    pantalla.addEventListener('click', handleTap);
+    pantalla.addEventListener('touchstart', handleTap, { passive: false });
 
-            // Verificar desigualdad triangular
-            if (a + b <= c || a + c <= b || b + c <= a) {
-                alert('Los lados no forman un triángulo válido');
-                return;
-            }
-            
-            // Ley de los cosenos
-            const cosA = (b * b + c * c - a * a) / (2 * b * c);
-            const A = Math.acos(cosA) * (180 / Math.PI);
-
-            const cosB = (a * a + c * c - b * b) / (2 * a * c);
-            const B = Math.acos(cosB) * (180 / Math.PI);
-
-            const cosC = (a * a + b * b - c * c) / (2 * a * b);
-            const C = Math.acos(cosC) * (180 / Math.PI);
-
-            document.getElementById('valor-A').textContent = A.toFixed(2);
-            document.getElementById('valor-B').textContent = B.toFixed(2);
-            document.getElementById('valor-C').textContent = C.toFixed(2);
-            resultadosAngulos.style.display = 'block';
-        }
-
-        // Scroll listener para navbar (actualizar active basado en scroll)
-        carousel.addEventListener('scroll', () => {
-            const index = Math.round(carousel.scrollTop / itemHeight);
-            const clampedIndex = Math.max(0, Math.min(index, letras.length - 1));
-            if (clampedIndex !== activeIndex) {
-                activeIndex = clampedIndex;
-                updateNavbar();
-            }
+    document.querySelectorAll('.tecla').forEach(tecla => {
+        tecla.addEventListener('click', () => {
+            const valor = tecla.dataset.value;
+            manejarTecla(valor);
         });
+    });
 
-        // Funciones Save/Load
-        window.guardar = function(letra) {
-            datosGuardados[letra] = expresionActual || '0';
-            document.getElementById(`num-${letra}`).textContent = datosGuardados[letra];
-            guardarEnLocalStorage();
+    document.addEventListener('keydown', (e) => {
+        if (document.activeElement.tagName === 'INPUT') return;
+
+        const keyMap = {
+            '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
+            '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
+            '+': '+', '-': '-', '*': '*', '/': '/', 'Enter': '=', 
+            'Backspace': 'DEL', '.': '.', '%': '%'
         };
 
-        window.cargar = function(letra) {
-            const valor = datosGuardados[letra];
-            if (expresionActual === '' || resultadoPresente) {
-                expresionActual = valor;
-                cursorPos = valor.length;
-                resultadoPresente = false;
-            } else {
-                insertarTexto(valor);
-            }
+        if (keyMap[e.key]) {
+            e.preventDefault();
+            manejarTecla(keyMap[e.key]);
+        }
+    });
+
+    function actualizarPantalla() {
+        textoIzq.textContent = expresionActual.slice(0, cursorPos);
+        textoDer.textContent = expresionActual.slice(cursorPos);
+        cursorEl.style.display = (expresionActual === '' || resultadoPresente) ? 'none' : 'block';
+    }
+
+    // === FUNCIÓN CLAVE: EVALUAR EXPRESIÓN SEGURA ===
+    function evaluarExpresion(expr) {
+        try {
+            // Reemplazos seguros
+            let jsExpr = expr
+                .replace(/×/g, '*')
+                .replace(/÷/g, '/')
+                .replace(/%/g, '/100')
+                .replace(/√\(/g, 'Math.sqrt(')
+                .replace(/√/g, 'Math.sqrt'); // √ suelto → Math.sqrt
+
+            // Cerrar paréntesis abiertos
+            const open = (jsExpr.match(/\(/g) || []).length;
+            const close = (jsExpr.match(/\)/g) || []).length;
+            jsExpr += ')'.repeat(Math.max(0, open - close));
+
+            // Usar Function en lugar de eval (más seguro)
+            return Function('"use strict"; return (' + jsExpr + ')')();
+        } catch (error) {
+            throw new Error('Expresión inválida');
+        }
+    }
+
+    function manejarTecla(valor) {
+        if (valor === 'C') {
+            expresionActual = '';
+            cursorPos = 0;
+            resultadoPresente = false;
             pantalla.classList.remove('resultado-presente');
             actualizarPantalla();
-        };
-
-        // Función para insertar texto en la posición del cursor
-        function insertarTexto(texto) {
-            expresionActual = expresionActual.slice(0, cursorPos) + texto + expresionActual.slice(cursorPos);
-            cursorPos += texto.length;
-        }
-
-        // Función para manejar tap en la pantalla
-        function handleTap(e) {
-            e.preventDefault();
-            const rect = pantalla.getBoundingClientRect();
-            const x = (e.type === 'touchstart' ? e.touches[0].clientX : e.clientX) - rect.left;
-            const style = window.getComputedStyle(pantalla);
-            const paddingRight = parseFloat(style.paddingRight);
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.font = `${style.fontSize} ${style.fontFamily}`;
-            const textWidth = ctx.measureText(expresionActual).width;
-            const textStartX = pantalla.clientWidth - textWidth - paddingRight;
-            let relativeX = x - textStartX;
-            if (relativeX < 0) {
-                cursorPos = 0;
-            } else if (relativeX > textWidth) {
-                cursorPos = expresionActual.length;
-            } else {
-                let current = 0;
-                cursorPos = expresionActual.length;
-                for (let i = 0; i < expresionActual.length; i++) {
-                    const char = expresionActual[i];
-                    const charWidth = ctx.measureText(char).width;
-                    if (current + charWidth / 2 > relativeX) {
-                        cursorPos = i;
-                        break;
-                    }
-                    current += charWidth;
-                }
+        } else if (valor === 'DEL') {
+            if (cursorPos > 0) {
+                expresionActual = expresionActual.slice(0, cursorPos - 1) + expresionActual.slice(cursorPos);
+                cursorPos--;
             }
+            pantalla.classList.remove('resultado-presente');
+            resultadoPresente = false;
             actualizarPantalla();
-        }
-
-        // Event listeners para pantalla
-        pantalla.addEventListener('click', handleTap);
-        pantalla.addEventListener('touchstart', handleTap, { passive: false });
-
-        // Event listeners para teclado
-        document.querySelectorAll('.tecla').forEach(tecla => {
-            tecla.addEventListener('click', () => {
-                const valor = tecla.dataset.value;
-                manejarTecla(valor);
-            });
-        });
-
-        // Event listener para atajos de teclado
-        document.addEventListener('keydown', (e) => {
-            // Si el foco está en un input, no interferir con el comportamiento normal
-            if (document.activeElement.tagName === 'INPUT') {
-                return;
-            }
-
-            // Evitar el comportamiento por defecto solo para las teclas que usamos
-            if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-                 '+', '-', '*', '/', 'Enter', 'Backspace', '.', '%'].includes(e.key)) {
-                e.preventDefault();
-            }
-            
-            // Mapeo de teclas físicas a funciones de la calculadora
-            switch(e.key) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    manejarTecla(e.key);
-                    break;
-                case '+':
-                    manejarTecla('+');
-                    break;
-                case '-':
-                    manejarTecla('-');
-                    break;
-                case '*':
-                    manejarTecla('*');
-                    break;
-                case '/':
-                    manejarTecla('/');
-                    break;
-                case 'Enter':
-                    manejarTecla('=');
-                    break;
-                case 'Backspace':
-                    manejarTecla('DEL');
-                    break;
-                case '.':
-                    manejarTecla('.');
-                    break;
-                case '%':
-                    manejarTecla('%');
-                    break;
-            }
-        });
-
-        function actualizarPantalla() {
-            textoIzq.textContent = expresionActual.slice(0, cursorPos);
-            textoDer.textContent = expresionActual.slice(cursorPos);
-            cursorEl.style.display = (expresionActual === '' || resultadoPresente) ? 'none' : 'block';
-        }
-
-        function manejarTecla(valor) {
-            if (valor === 'C') {
-                expresionActual = '';
-                cursorPos = 0;
-                resultadoPresente = false;
-                pantalla.classList.remove('resultado-presente');
+        } else if (valor === '=') {
+            if (expresionActual === '') return;
+            try {
+                const resultado = evaluarExpresion(expresionActual);
+                if (!isFinite(resultado)) throw new Error();
+                expresionActual = resultado % 1 === 0 ? resultado.toString() : resultado.toFixed(8).replace(/\.?0+$/, '');
+                cursorPos = expresionActual.length;
+                pantalla.classList.add('resultado-presente');
+                resultadoPresente = true;
                 actualizarPantalla();
-            } else if (valor === 'DEL') {
-                if (cursorPos > 0) {
-                    expresionActual = expresionActual.slice(0, cursorPos - 1) + expresionActual.slice(cursorPos);
-                    cursorPos--;
-                }
-                pantalla.classList.remove('resultado-presente');
-                resultadoPresente = false;
-                actualizarPantalla();
-            } else if (valor === '=') {
-                if (expresionActual === '') {
-                    return;
-                }
-                try {
-                    let expr = expresionActual
-                        .replace('÷', '/')
-                        .replace('×', '*')
-                        .replace('%', '/100')
-                        .replace(/√\(/g, 'Math.sqrt(');
-                    // Auto-cerrar paréntesis para √ y otros
-                    const openParens = (expr.match(/\(/g) || []).length;
-                    const closeParens = (expr.match(/\)/g) || []).length;
-                    const missing = openParens - closeParens;
-                    if (missing > 0) {
-                        expr += ')'.repeat(missing);
-                    }
-                    const resultado = eval(expr);
-                    expresionActual = resultado.toString();
-                    cursorPos = expresionActual.length;
-                    pantalla.classList.add('resultado-presente');
-                    resultadoPresente = true;
-                    actualizarPantalla();
-                } catch (e) {
-                    cursorEl.style.display = 'none';
-                    textoIzq.textContent = 'Error';
-                    textoDer.textContent = '';
-                    setTimeout(() => {
-                        expresionActual = '';
-                        cursorPos = 0;
-                        pantalla.classList.remove('resultado-presente');
-                        resultadoPresente = false;
-                        actualizarPantalla();
-                    }, 1000);
-                }
-            } else if (['+', '-', '*', '/', '%', '.', '√'].includes(valor)) {
-                let toInsert;
-                if (resultadoPresente) {
-                    resultadoPresente = false;
+            } catch (e) {
+                cursorEl.style.display = 'none';
+                textoIzq.textContent = 'Error';
+                textoDer.textContent = '';
+                setTimeout(() => {
+                    expresionActual = '';
+                    cursorPos = 0;
                     pantalla.classList.remove('resultado-presente');
+                    resultadoPresente = false;
+                    actualizarPantalla();
+                }, 1000);
+            }
+        } else if (['+', '-', '*', '/', '%', '.', '√'].includes(valor)) {
+            if (resultadoPresente) {
+                resultadoPresente = false;
+                pantalla.classList.remove('resultado-presente');
+                if (!['+', '-', '*', '/', '√'].includes(valor)) {
                     expresionActual = '';
                     cursorPos = 0;
                 }
-                if (expresionActual === '') {
-                    if (valor === '√') {
-                        toInsert = '√(';
-                    } else {
-                        toInsert = getDisplayValue(valor);
-                        expresionActual = '0';
-                        cursorPos = 1;
-                    }
-                } else {
-                    if (valor === '√') {
-                        toInsert = '√(';
-                        if (cursorPos > 0 && /[0-9.]/.test(expresionActual.charAt(cursorPos - 1))) {
-                            toInsert = '×' + toInsert;
-                        }
-                    } else {
-                        toInsert = getDisplayValue(valor);
-                    }
-                }
-                insertarTexto(toInsert);
-                actualizarPantalla();
+            }
+            let toInsert = valor === '*' ? '×' : valor === '/' ? '÷' : valor === '√' ? '√(' : valor;
+            if (expresionActual === '' && !['+', '-', '√'].includes(valor)) {
+                expresionActual = '0';
+                cursorPos = 1;
+            }
+            if (valor === '√' && cursorPos > 0 && /[0-9.]/.test(expresionActual[cursorPos - 1])) {
+                toInsert = '×√(';
+            }
+            insertarTexto(toInsert);
+            actualizarPantalla();
+        } else {
+            if (resultadoPresente) {
+                expresionActual = valor;
+                cursorPos = 1;
+                resultadoPresente = false;
+                pantalla.classList.remove('resultado-presente');
+            } else if (expresionActual === '') {
+                expresionActual = valor;
+                cursorPos = 1;
             } else {
-                // Número
-                if (resultadoPresente) {
-                    expresionActual = valor;
-                    cursorPos = 1;
-                    resultadoPresente = false;
-                    pantalla.classList.remove('resultado-presente');
-                } else if (expresionActual === '') {
-                    expresionActual = valor;
-                    cursorPos = 1;
-                } else {
-                    insertarTexto(valor);
-                }
-                actualizarPantalla();
+                insertarTexto(valor);
             }
+            actualizarPantalla();
         }
+    }
 
-        function getDisplayValue(valor) {
-            switch (valor) {
-                case '+': return '+';
-                case '-': return '-';
-                case '*': return '×';
-                case '/': return '÷';
-                case '%': return '%';
-                case '.': return '.';
-                default: return valor;
-            }
+    // Extras
+    document.getElementById('limpiar-datos').addEventListener('click', () => {
+        document.getElementById('modal-limpiar').style.display = 'flex';
+    });
+
+    document.getElementById('confirmar-si').addEventListener('click', () => {
+        letras.forEach(letra => {
+            datosGuardados[letra] = '0';
+            document.getElementById(`num-${letra}`).textContent = '0';
+        });
+        guardarEnLocalStorage();
+        document.getElementById('modal-limpiar').style.display = 'none';
+    });
+
+    document.getElementById('confirmar-no').addEventListener('click', () => {
+        document.getElementById('modal-limpiar').style.display = 'none';
+    });
+
+    document.getElementById('cerrar-app').addEventListener('click', () => {
+        if (confirm('¿Cerrar la app?')) {
+            window.close();
         }
+    });
 
-        // Extras
-        document.getElementById('limpiar-datos').addEventListener('click', () => {
-            document.getElementById('modal-limpiar').style.display = 'flex';
-        });
+    // Eventos pantallas
+    plusBtn.addEventListener('click', togglePlusScreen);
+    volverPlusBtn.addEventListener('click', volverAPlusScreen);
+    volverAngulosBtn.addEventListener('click', volverAAngulosScreen);
+    volverTrapecioBtn.addEventListener('click', volverATrapecioScreen);
+    toggleM2Btn.addEventListener('click', toggleSimplified);
+    calcularBtn.addEventListener('click', calcularHipotenusa);
+    calcularAngulosBtn.addEventListener('click', calcularAngulos);
+    calcularAreaTrapecioBtn.addEventListener('click', calcularAreaTrapecio);
 
-        document.getElementById('confirmar-si').addEventListener('click', () => {
-            letras.forEach(letra => {
-                datosGuardados[letra] = '0';
-                document.getElementById(`num-${letra}`).textContent = '0';
-            });
-            guardarEnLocalStorage();
-            document.getElementById('modal-limpiar').style.display = 'none';
-        });
-
-        document.getElementById('confirmar-no').addEventListener('click', () => {
-            document.getElementById('modal-limpiar').style.display = 'none';
-        });
-
-        document.getElementById('cerrar-app').addEventListener('click', () => {
-            if (confirm('¿Cerrar la app?')) {
-                window.close();
-            }
-        });
-
-        // Event listeners para pantallas
-        plusBtn.addEventListener('click', togglePlusScreen);
-        volverPlusBtn.addEventListener('click', volverAPlusScreen);
-        volverAngulosBtn.addEventListener('click', volverAAngulosScreen);
-        calcularBtn.addEventListener('click', calcularHipotenusa);
-        calcularAngulosBtn.addEventListener('click', calcularAngulos);
-
-        // Permitir calcular con Enter
-        inputA.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                calcularHipotenusa();
-            }
-        });
-
-        inputB.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                calcularHipotenusa();
-            }
-        });
-
-        inputA_ang.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                calcularAngulos();
-            }
-        });
-
-        inputB_ang.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                calcularAngulos();
-            }
-        });
-
-        inputC_ang.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                calcularAngulos();
-            }
-        });
-
-        // Inicializar
-        inicializarCarousel();
-        inicializarPlusScreen();
-        actualizarPantalla(); // Asegurar vacío al inicio
-    </script>
+    // Inicializar
+    inicializarCarousel();
+    inicializarPlusScreen();
+    actualizarPantalla();
+</script>
 </body>
 </html>
