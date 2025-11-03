@@ -1239,40 +1239,35 @@
     }
 
     function calcularAngulos() {
-    const a = parseFloat(inputA_ang.value);
-    const b = parseFloat(inputB_ang.value);
-    const c = parseFloat(inputC_ang.value);
-    
-    if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
-        alert('Por favor, ingresa valores válidos para los lados (números mayores que 0)');
-        return;
+        const a = parseFloat(inputA_ang.value);
+        const b = parseFloat(inputB_ang.value);
+        const c = parseFloat(inputC_ang.value);
+        
+        if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
+            alert('Por favor, ingresa valores válidos para los lados (números mayores que 0)');
+            return;
+        }
+
+        if (a + b <= c || a + c <= b || b + c <= a) {
+            alert('Los lados no forman un triángulo válido');
+            return;
+        }
+        
+        const cosA = (b * b + c * c - a * a) / (2 * b * c);
+        const A = Math.acos(cosA) * (180 / Math.PI);
+
+        const cosB = (a * a + c * c - b * b) / (2 * a * c);
+        const B = Math.acos(cosB) * (180 / Math.PI);
+
+        const cosC = (a * a + b * b - c * c) / (2 * a * b);
+        const C = Math.acos(cosC) * (180 / Math.PI);
+
+        document.getElementById('valor-A').textContent = A.toFixed(2);
+        document.getElementById('valor-B').textContent = B.toFixed(2);
+        document.getElementById('valor-C').textContent = C.toFixed(2);
+        resultadosAngulos.style.display = 'block';
     }
 
-    if (a + b <= c || a + c <= b || b + c <= a) {
-        alert('Los lados no forman un triángulo válido');
-        return;
-    }
-    
-    // Calcular ángulos usando Ley de Cosenos
-    // Ángulo A (opuesto al lado a)
-    const cosA = (b * b + c * c - a * a) / (2 * b * c);
-    const A = Math.acos(cosA) * (180 / Math.PI);
-
-    // Ángulo B (opuesto al lado b)
-    const cosB = (a * a + c * c - b * b) / (2 * a * c);
-    const B = Math.acos(cosB) * (180 / Math.PI);
-
-    // Ángulo C (opuesto al lado c)
-    const cosC = (a * a + b * b - c * c) / (2 * a * b);
-    const C = Math.acos(cosC) * (180 / Math.PI);
-
-    // ASIGNACIÓN CORREGIDA - Los ángulos van con sus lados opuestos
-    document.getElementById('valor-A').textContent = A.toFixed(2);
-    document.getElementById('valor-B').textContent = B.toFixed(2);
-    document.getElementById('valor-C').textContent = C.toFixed(2);
-    
-    resultadosAngulos.style.display = 'block';
-}
     function calcularAreaTrapecio() {
         let h, ab, AB;
         
